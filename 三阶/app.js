@@ -981,12 +981,12 @@
      ============================================================ */
   const KEY_MAPS = {
     color: {
-      'h':['U',false],'H':['U',true],
-      'b':['D',false],'B':['D',true],
+      'y':['U',false],'Y':['U',true],
+      'w':['D',false],'W':['D',true],
       'g':['F',false],'G':['F',true],
-      'l':['B',false],'L':['B',true],
+      'b':['B',false],'B':['B',true],
       'r':['R',false],'R':['R',true],
-      'c':['L',false],'C':['L',true],
+      'o':['L',false],'O':['L',true],
     },
     standard: {
       'u':['U',false],'U':['U',true],

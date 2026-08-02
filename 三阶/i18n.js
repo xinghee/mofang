@@ -50,7 +50,7 @@
       combo_hand_left: '左手公式',
       combo_sep: '：',
 
-      hint_color: '<b>H</b>Y / <b>B</b>W / <b>G</b>G / <b>L</b>B / <b>R</b>R / <b>C</b>O',
+      hint_color: '<b>Y</b> / <b>W</b> / <b>G</b> / <b>B</b> / <b>R</b> / <b>O</b>',
       hint_standard: '<b>U</b>上 / <b>D</b>下 / <b>F</b>前 / <b>B</b>后 / <b>R</b>右 / <b>L</b>左'
     },
 
@@ -97,7 +97,7 @@
       combo_hand_left: 'Left-hand',
       combo_sep: ': ',
 
-      hint_color: '<b>H</b>Y / <b>B</b>W / <b>G</b>G / <b>L</b>B / <b>R</b>R / <b>C</b>O',
+      hint_color: '<b>Y</b> / <b>W</b> / <b>G</b> / <b>B</b> / <b>R</b> / <b>O</b>',
       hint_standard: '<b>U</b>Up / <b>D</b>Down / <b>F</b>Front / <b>B</b>Back / <b>R</b>Right / <b>L</b>Left'
     }
   };
