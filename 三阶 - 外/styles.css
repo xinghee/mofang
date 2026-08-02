@@ -1,0 +1,171 @@
+  :root{
+    /* 护眼黄风格 */
+    --bg:#f1e9cf;        /* 主背景：护眼豆沙黄 */
+    --panel:#fbf6e6;     /* 面板：略亮的米黄 */
+    --panel-border:#d9c79a; /* 面板边框 */
+    --text:#3f3a2c;      /* 深棕文字 */
+    --muted:#8a7c52;     /* 次要文字 */
+    --accent:#a06a2c;    /* 强调色：棕橙 */
+
+    /* 魔方六面颜色 */
+    --c-U:#f7d000; /* 上 (黄) - 黄色 */
+    --c-D:#f5f5f5; /* 下 (白) - 白色 */
+    --c-F:#1faa4a; /* 前 (绿) - 绿色 */
+    --c-B:#1e6fd6; /* 后 (蓝) - 蓝色 */
+    --c-R:#d92121; /* 右 (红) - 红色 */
+    --c-L:#ff7a1a; /* 左 (橙) - 橙色 */
+    --c-core:#2a2a2a;  /* 魔方核心黑灰 */
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  .app{ max-width:1180px; margin:0 auto; padding:22px 16px 60px; }
+  header{ text-align:center; margin-bottom:6px; }
+  header h1{ font-size:22px; margin:0 0 6px; font-weight:600; letter-spacing:.5px;}
+  header p{ margin:0; color:var(--muted); font-size:13px; line-height:1.7;}
+  header p b{ color:var(--text); }
+
+  .top-actions{ display:flex; justify-content:center; gap:10px; margin:16px 0 22px; flex-wrap:wrap;}
+  .btn{
+    background:#f7efda; color:var(--text); border:1px solid var(--panel-border);
+    padding:8px 16px; border-radius:8px; font-size:13px; cursor:pointer; transition:.15s;
+  }
+  .btn:hover{ background:#fff7e0; border-color:#c8b27e; }
+  .btn:active{ transform:translateY(1px); }
+  .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fbf6e6; font-weight:600;}
+  .btn.primary:hover{ filter:brightness(1.08); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; }
+  @media (max-width:880px){ .grid{ grid-template-columns:1fr; } }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--panel-border); border-radius:16px;
+    padding:16px 16px 20px; display:flex; flex-direction:column;
+  }
+  .panel h2{ font-size:14px; margin:0 0 4px; color:var(--muted); font-weight:600; letter-spacing:.5px;}
+  .panel .sub{ font-size:12px; color:var(--muted); margin-bottom:10px; }
+
+  /* ================= 2D 平面图 ================= */
+  /* 三组"三圈同心圆"两两相交，54 个交点 = 54 个贴纸 */
+  .diagram-wrap{
+    position:relative; width:100%; padding-top:100%;
+    flex:1;
+  }
+  .diagram-inner{ position:absolute; inset:0; }
+  #planarSvg{ position:absolute; inset:0; width:100%; height:100%; }
+  #planarSvg .bundle-circle{ fill:none; stroke:#c9b783; stroke-width:1; }
+  #planarSvg .bundle-center{ fill:#b2a06a; }
+  #planarSvg .sticker{
+    stroke:rgba(0,0,0,.4); stroke-width:1.5; cursor:default;
+    transition:filter .3s ease;
+  }
+  #planarSvg .sticker.flying{ filter:drop-shadow(0 0 3px rgba(255,255,255,.5)); }
+
+  .face-label{ position:absolute; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+  .face-label .lbl-text{ font-size:10px; color:var(--muted); letter-spacing:.5px; margin-bottom:3px; white-space:nowrap;}
+  .face-label .cluster-ctrl{ display:flex; justify-content:center; gap:4px; pointer-events:auto; }
+  .mini-btn{
+    width:22px; height:20px; border-radius:5px; border:1px solid var(--panel-border);
+    background:#f7efda; color:var(--text); font-size:11px; cursor:pointer; line-height:1;
+  }
+  .mini-btn:hover{ background:#fff7e0; }
+  .mini-btn:disabled{ opacity:.35; cursor:not-allowed; }
+
+  /* ================= 3D 立体魔方 ================= */
+  .scene-wrap{
+    position:relative; width:100%; padding-top:78%;
+    perspective:1000px; flex:1;
+  }
+  /* 视觉层：3D 旋转后包围盒会溢出 wrap 框。pointer-events:none 让它不拦截任何点击，
+     可自由溢出完整显示（不再用 overflow:hidden 裁剪，避免手机端魔方被切边）。 */
+  .scene{
+    position:absolute; inset:0;
+    transform-style:preserve-3d;
+    transform:rotateX(-24deg) rotateY(-35deg);
+    pointer-events:none;          /* 视觉内容不接收鼠标事件（点击/拖拽都交给 sceneHit） */
+    user-select:none;             /* 阻止原生文本/元素选中拖拽与 pointermove 打架 */
+    -webkit-user-select:none;
+    -webkit-user-drag:none;       /* 阻止 HTML5 原生拖拽（no-drop 光标 + 选区重绘） */
+  }
+  /* 热区层：纯 2D 矩形，大小恒等于 .scene-wrap，不随 3D 旋转变形，
+     命中范围永不超出面板 → 不会盖住下方控制面板按钮。 */
+  .sceneHit{
+    position:absolute; inset:0;
+    cursor:grab;
+    touch-action:none;            /* 阻止浏览器滚动/手势抢占 */
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .sceneHit.grabbing{ cursor:grabbing; }
+  .originGroup{
+    position:absolute; top:50%; left:50%; width:0; height:0;
+    transform-style:preserve-3d;
+  }
+  .cubie{
+    position:absolute; top:calc(var(--cs) / -2); left:calc(var(--cs) / -2);
+    width:var(--cs); height:var(--cs);
+    transform-style:preserve-3d;
+    user-select:none; -webkit-user-select:none; -webkit-user-drag:none;
+  }
+  .face{
+    position:absolute; top:0; left:0; width:var(--cs); height:var(--cs);
+    border-radius:3px;
+    box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.55);
+    backface-visibility:hidden;
+    user-select:none; -webkit-user-select:none; -webkit-user-drag:none;
+  }
+
+  .controls-panel{ margin-top:18px; padding:14px 16px; }
+  .controls{ display:flex; gap:20px; align-items:flex-start; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+  .controls-col{ display:flex; flex-direction:column; }
+  .controls-col > .col-title{ font-size:11px; color:var(--muted); margin:0 0 8px; text-align:center; font-weight:600; letter-spacing:.5px; }
+  .move-row{ display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
+  .move-btn{
+    min-width:40px; padding:7px 6px; border-radius:7px; border:1px solid var(--panel-border);
+    background:#f7efda; color:var(--text); font-size:12px; cursor:pointer; font-weight:600;
+  }
+  .move-btn:hover{ background:#fff7e0; }
+  .move-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .move-face-U{ border-color:var(--c-U); } .move-face-D{ border-color:var(--c-D); }
+  .move-face-F{ border-color:var(--c-F); } .move-face-B{ border-color:var(--c-B); }
+  .move-face-L{ border-color:var(--c-L); } .move-face-R{ border-color:var(--c-R); }
+
+  /* 复合操作面板(右栏) */
+  .combo-panel{ display:flex; flex-direction:row; gap:16px; align-items:stretch; }
+  .combo-left{ display:flex; flex-direction:column; gap:10px; flex:1; }
+  .combo-group{ display:flex; flex-direction:column; gap:4px; }
+  .combo-group-label{ font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.3px; }
+  .combo-options{ display:flex; gap:5px; flex-wrap:wrap; }
+  .combo-opt{
+    min-width:34px; padding:5px 8px; border-radius:6px; border:2px solid var(--panel-border);
+    background:#f7efda; color:var(--text); font-size:12px; cursor:pointer; font-weight:600;
+    text-align:center; transition:border-color .15s, background .15s;
+  }
+  .combo-opt:hover{ background:#fff7e0; }
+  .combo-opt.active{ border-color:var(--accent); background:#fff7e0; box-shadow:0 0 0 1px var(--accent); }
+  .combo-opt:disabled{ opacity:.35; cursor:not-allowed; }
+  /* 颜色边框 + 选中半透明底色 */
+  .combo-opt.c-U{ border-color:var(--c-U); } .combo-opt.c-U.active{ background:rgba(247,208,0,.28); box-shadow:0 0 0 1.5px var(--c-U); }
+  .combo-opt.c-D{ border-color:#bbb; }       .combo-opt.c-D.active{ background:rgba(200,200,200,.32); box-shadow:0 0 0 1.5px #999; }
+  .combo-opt.c-F{ border-color:var(--c-F); } .combo-opt.c-F.active{ background:rgba(31,170,74,.22); box-shadow:0 0 0 1.5px var(--c-F); }
+  .combo-opt.c-B{ border-color:var(--c-B); } .combo-opt.c-B.active{ background:rgba(30,111,214,.22); box-shadow:0 0 0 1.5px var(--c-B); }
+  .combo-opt.c-L{ border-color:var(--c-L); } .combo-opt.c-L.active{ background:rgba(255,122,26,.25); box-shadow:0 0 0 1.5px var(--c-L); }
+  .combo-opt.c-R{ border-color:var(--c-R); } .combo-opt.c-R.active{ background:rgba(217,33,33,.22); box-shadow:0 0 0 1.5px var(--c-R); }
+  /* 执行按钮(右侧竖向) */
+  .combo-exec{
+    align-self:stretch; padding:24px 12px; border-radius:8px; border:none;
+    background:var(--accent); color:#fbf6e6; font-size:14px; font-weight:700;
+    cursor:pointer; letter-spacing:2px; transition:filter .15s;
+    writing-mode:vertical-rl; text-orientation:upright;
+  }
+  .combo-exec:hover{ filter:brightness(1.1); }
+  .combo-exec:active{ transform:translateY(1px); }
+  .combo-exec:disabled{ opacity:.4; cursor:not-allowed; }
+  .combo-desc{ font-size:11px; color:var(--muted); min-height:16px; line-height:1.4; }
+
+  .hint{ text-align:center; font-size:11.5px; color:var(--muted); margin-top:6px; }
+  .hint select{ font-size:11px; padding:2px 6px; border-radius:5px; border:1px solid var(--panel-border); background:#f7efda; color:var(--text); cursor:pointer; vertical-align:middle; }
+  footer{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:22px; }

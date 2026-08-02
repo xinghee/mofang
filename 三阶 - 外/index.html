@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>平面魔方 ⇄ 立体魔方 · 等价联动（模块化版）</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>平面魔方 ⇄ 立体魔方 · 等价联动</h1>
+    <p>左边的<b>平面环形图</b>与右边的<b>三阶立体魔方</b>是同一个魔方状态的两种表示方式。<br>
+       转动任意一边（3D 面按钮，或 2D 图上每个色块旁的 ↺ ↻ 小按钮），两侧会<b>同步联动</b>更新。</p>
+  </header>
+
+  <div class="top-actions">
+    <button class="btn primary" id="scrambleBtn">🔀 随机打乱</button>
+    <button class="btn" id="resetBtn">↺ 上一步</button>
+  </div>
+
+  <div class="grid">
+    <!-- ============ 2D PANEL ============ -->
+    <div class="panel">
+      <h2>平面等价图</h2>
+      <div class="sub">三组「三圈同心圆」两两相交 → 54 个交点 = 54 个小面；点击 ↺ / ↻ 旋转该面，或直接点某面色块簇——鼠标停在哪半边，就按那半边对应的方向转（悬停可看提示）</div>
+      <div class="diagram-wrap">
+        <div class="diagram-inner">
+          <svg id="planarSvg" viewBox="-340 -340 680 680"></svg>
+          <div id="faceLabels"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 3D PANEL ============ -->
+    <div class="panel">
+      <h2>立体魔方</h2>
+      <div class="sub">拖动可旋转视角</div>
+      <div class="scene-wrap">
+        <div class="scene" id="scene">
+          <div class="originGroup" id="cubeGroup"></div>
+          <div class="originGroup" id="sliceGroup"></div>
+        </div>
+        <div class="sceneHit" id="sceneHit"></div>
+      </div>
+      <!-- ============ 操作面板（立体魔方下方） ============ -->
+      <div class="controls" id="controls"></div>
+    </div>
+  </div>
+
+  <div class="hint">键盘快捷键：<select id="keyScheme"><option value="color">颜色键</option><option value="standard">标准键(U/D/F/B/L/R)</option></select> <span id="keyHintText"><b>H</b>黄 / <b>B</b>白 / <b>G</b>绿 / <b>L</b>蓝 / <b>R</b>红 / <b>C</b>橙</span>，<b>Shift</b>+字母=逆时针</div>
+  <footer>纯前端实现：真实的魔方群运算（旋转矩阵驱动），平面图与立体图共享同一份状态。</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
