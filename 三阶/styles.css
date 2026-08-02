@@ -171,3 +171,8 @@
   footer{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:22px; }
   .x-link{ display:inline-flex; align-items:center; gap:4px; color:var(--muted); text-decoration:none; margin-left:8px; vertical-align:middle; transition:color .15s; }
   .x-link:hover{ color:var(--text); text-decoration:underline; }
+  .lang-switch{ display:flex; gap:6px; align-items:center; justify-content:center; margin-top:6px; }
+  .lang-btn{ font-size:12px; padding:3px 10px; border-radius:6px; border:1px solid var(--panel-border); background:#f7efda; color:var(--muted); cursor:pointer; transition:all .15s; }
+  .lang-btn:hover{ color:var(--text); }
+  .lang-btn.active{ background:var(--accent); color:#fbf6e6; border-color:var(--accent); }
+  .lang-sep{ color:var(--muted); opacity:.5; }

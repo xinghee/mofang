@@ -3,27 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>平面魔方 ⇄ 立体魔方 · 等价联动（模块化版）</title>
+<title data-i18n="title">平面魔方 ⇄ 立体魔方 · 等价联动（模块化版）</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app">
   <header>
-    <h1>平面魔方 ⇄ 立体魔方 · 等价联动</h1>
-    <p>左边的<b>平面环形图</b>与右边的<b>三阶立体魔方</b>是同一个魔方状态的两种表示方式。<br>
+    <h1 data-i18n="h1">平面魔方 ⇄ 立体魔方 · 等价联动</h1>
+    <div class="lang-switch">
+      <button type="button" class="lang-btn" data-lang="zh">中文</button>
+      <span class="lang-sep">|</span>
+      <button type="button" class="lang-btn" data-lang="en">English</button>
+    </div>
+    <p data-i18n-html="desc">左边的<b>平面环形图</b>与右边的<b>三阶立体魔方</b>是同一个魔方状态的两种表示方式。<br>
        转动任意一边（3D 面按钮，或 2D 图上每个色块旁的 ↺ ↻ 小按钮），两侧会<b>同步联动</b>更新。</p>
   </header>
 
   <div class="top-actions">
-    <button class="btn primary" id="scrambleBtn">🔀 随机打乱</button>
-    <button class="btn" id="resetBtn">↺ 上一步</button>
+    <button class="btn primary" id="scrambleBtn" data-i18n="btn_scramble">🔀 随机打乱</button>
+    <button class="btn" id="resetBtn" data-i18n="btn_reset">↺ 上一步</button>
   </div>
 
   <div class="grid">
     <!-- ============ 2D PANEL ============ -->
     <div class="panel">
-      <h2>平面等价图</h2>
-      <div class="sub">三组「三圈同心圆」两两相交 → 54 个交点 = 54 个小面；点击 ↺ / ↻ 旋转该面，或直接点某面色块簇——鼠标停在哪半边，就按那半边对应的方向转（悬停可看提示）</div>
+      <h2 data-i18n="panel2d_h2">平面等价图</h2>
+      <div class="sub" data-i18n="panel2d_sub">三组「三圈同心圆」两两相交 → 54 个交点 = 54 个小面；点击 ↺ / ↻ 旋转该面，或直接点某面色块簇——鼠标停在哪半边，就按那半边对应的方向转（悬停可看提示）</div>
       <div class="diagram-wrap">
         <div class="diagram-inner">
           <svg id="planarSvg" viewBox="-340 -340 680 680"></svg>
@@ -34,8 +39,8 @@
 
     <!-- ============ 3D PANEL ============ -->
     <div class="panel">
-      <h2>立体魔方</h2>
-      <div class="sub">拖动可旋转视角</div>
+      <h2 data-i18n="panel3d_h2">立体魔方</h2>
+      <div class="sub" data-i18n="panel3d_sub">拖动可旋转视角</div>
       <div class="scene-wrap">
         <div class="scene" id="scene">
           <div class="originGroup" id="cubeGroup"></div>
@@ -48,15 +53,21 @@
     </div>
   </div>
 
-  <div class="hint">键盘快捷键：<select id="keyScheme"><option value="color">颜色键</option><option value="standard">标准键(U/D/F/B/L/R)</option></select> <span id="keyHintText"><b>H</b>黄 / <b>B</b>白 / <b>G</b>绿 / <b>L</b>蓝 / <b>R</b>红 / <b>C</b>橙</span>，<b>Shift</b>+字母=逆时针</div>
-  <footer>纯前端实现：真实的魔方群运算（旋转矩阵驱动），平面图与立体图共享同一份状态。
-    <a class="x-link" href="https://x.com/xingheee" target="_blank" rel="noopener noreferrer" title="在 X 上关注我">
+  <div class="hint">
+    <span data-i18n="hint_prefix">键盘快捷键：</span>
+    <select id="keyScheme"><option value="color" data-i18n="opt_color">颜色键</option><option value="standard" data-i18n="opt_standard">标准键(U/D/F/B/L/R)</option></select>
+    <span id="keyHintText"><b>H</b>黄 / <b>B</b>白 / <b>G</b>绿 / <b>L</b>蓝 / <b>R</b>红 / <b>C</b>橙</span>
+    <span data-i18n-html="hint_suffix">，<b>Shift</b>+字母=逆时针</span>
+  </div>
+  <footer><span data-i18n="footer">纯前端实现：真实的魔方群运算（旋转矩阵驱动），平面图与立体图共享同一份状态。</span>
+    <a class="x-link" href="https://x.com/xingheee" target="_blank" rel="noopener noreferrer" data-i18n-attr="title" data-i18n="x_title" title="在 X 上关注我">
       <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       @xingheee
     </a>
   </footer>
 </div>
 
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 <!-- 不蒜子访问统计 -->
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>

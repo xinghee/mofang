@@ -118,8 +118,8 @@
   /* ============================================================
      2. 颜色
      ============================================================ */
-  // 面字母 → 中文颜色名（中心块颜色）
-  const FACE_COLOR_NAME = {U:'黄', D:'白', F:'绿', B:'蓝', L:'橙', R:'红'};
+  // 面字母 → 颜色名（语言感知）
+  function faceColorName(f){ return window.t('fc_'+f); }
   const COLOR = {
     U:getCss('--c-U'), D:getCss('--c-D'), F:getCss('--c-F'),
     B:getCss('--c-B'), L:getCss('--c-L'), R:getCss('--c-R'),
@@ -204,7 +204,7 @@
     }
   });
 
-  const clusterLabel = {U:'黄·上', D:'白·下', F:'绿·前', B:'蓝·后', L:'橙·左', R:'红·右'};
+  function clusterLabelOf(f){ return window.t('cl_'+f); }
   const VB = 340; // viewBox 半宽/半高
 
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -314,7 +314,7 @@
     return cross > 0;
   }
   function faceHintText(face, ccw){
-    return FACE_COLOR_NAME[face] + (ccw ? "：逆时针 ↺（点这一侧）" : "：顺时针 ↻（点这一侧）");
+    return faceColorName(face) + (ccw ? window.t('hover_ccw') : window.t('hover_cw'));
   }
   FACES.forEach(face=>{
     const hitTitle = hitEls[face].querySelector('title');
@@ -347,6 +347,7 @@
   }
 
   // 第二遍：放置面标签 + 旋转按钮（朝外方向复用第一遍已算好的 outwardDir，避免重复计算）
+  const faceLabelEls = {}, ccwBtns = {}, cwBtns = {};   // 语言切换刷新用
   FACES.forEach(face=>{
     const [cx,cy] = centroidOf[face];
     const [dirx, diry] = outwardDir[face];
@@ -360,19 +361,21 @@
 
     const label = document.createElement('div');
     label.className = 'lbl-text';
-    label.textContent = clusterLabel[face];
+    label.textContent = clusterLabelOf(face);
+    faceLabelEls[face] = label;
 
     const ctrl = document.createElement('div');
     ctrl.className = 'cluster-ctrl';
     const ccwBtn = document.createElement('button');
     ccwBtn.className = 'mini-btn'; ccwBtn.textContent = '↺';
-    ccwBtn.title = FACE_COLOR_NAME[face] + "' (逆时针)";
+    ccwBtn.title = faceColorName(face) + window.t('ccw_title_suffix');
     ccwBtn.addEventListener('click', ()=>doMove(face, true, undefined, commitStep));
     const cwBtn = document.createElement('button');
     cwBtn.className = 'mini-btn'; cwBtn.textContent = '↻';
-    cwBtn.title = FACE_COLOR_NAME[face] + ' (顺时针)';
+    cwBtn.title = faceColorName(face) + window.t('cw_title_suffix');
     cwBtn.addEventListener('click', ()=>doMove(face, false, undefined, commitStep));
     ctrl.appendChild(ccwBtn); ctrl.appendChild(cwBtn);
+    ccwBtns[face] = ccwBtn; cwBtns[face] = cwBtn;
 
     wrap.appendChild(label);
     wrap.appendChild(ctrl);
@@ -490,9 +493,10 @@
     if(pendingStep.length){ moveHistory.push(pendingStep); pendingStep = []; }
   }
 
+  let refreshFaceBtns = function(){};   // 由 buildControls 注入最新闭包（含当前 faceBtns）
   function setControlsDisabled(disabled){
     document.querySelectorAll('.move-btn, .mini-btn, .combo-opt, #scrambleBtn, #resetBtn').forEach(b=>b.disabled=disabled);
-    if(!disabled) updateFaceBtnsDisabled(); // 恢复旋转面中顶面同色/对面的禁用
+    if(!disabled) refreshFaceBtns(); // 恢复旋转面中顶面同色/对面的禁用
   }
 
   // 绕给定圆心 center 把 from 沿"半径 + 角度"同时插值到 to —— 视觉上就是绕那个
@@ -767,11 +771,13 @@
     })();
   }
 
+  function buildControls(){
+  controlsRoot.innerHTML = '';   // 切换语言时先清空，避免控件重复堆叠
   // —— 左栏：单步转动(原 12 按钮) ——
   const leftCol = document.createElement('div');
   leftCol.className = 'controls-col';
   const leftTitle = document.createElement('div');
-  leftTitle.className = 'col-title'; leftTitle.textContent = '单步转动';
+  leftTitle.className = 'col-title'; leftTitle.textContent = window.t('single_turn');
   leftCol.appendChild(leftTitle);
   const rows = [['U','D'],['F','B'],['L','R']];
   rows.forEach(pair=>{
@@ -781,7 +787,7 @@
       [false,true].forEach(prime=>{
         const btn = document.createElement('button');
         btn.className = 'move-btn move-face-'+face;
-        btn.textContent = FACE_COLOR_NAME[face] + (prime?"'":'');
+        btn.textContent = faceColorName(face) + (prime?"'":'');
         btn.addEventListener('click', ()=>doMove(face, prime, undefined, commitStep));
         row.appendChild(btn);
       });
@@ -793,7 +799,7 @@
   const rightCol = document.createElement('div');
   rightCol.className = 'controls-col';
   const rightTitle = document.createElement('div');
-  rightTitle.className = 'col-title'; rightTitle.textContent = '复合操作';
+  rightTitle.className = 'col-title'; rightTitle.textContent = window.t('combo_op');
   rightCol.appendChild(rightTitle);
 
   const panel = document.createElement('div');
@@ -834,12 +840,12 @@
     return btns;
   }
 
-  const faceOptions = FACES.map(f=>({ label:FACE_COLOR_NAME[f], value:f, cls:'c-'+f, title:FACE_COLOR_NAME[f]+'('+f+')' }));
+  const faceOptions = FACES.map(f=>({ label:faceColorName(f), value:f, cls:'c-'+f, title:faceColorName(f)+'('+f+')' }));
 
   // 1. 顶面选择
-  const topBtns = makeOptionGroup('1. 以什么为顶面', faceOptions, 'top', onTopChange);
+  const topBtns = makeOptionGroup(window.t('grp_top'), faceOptions, 'top', onTopChange);
   // 2. 旋转面选择
-  const faceBtns = makeOptionGroup('2. 选择旋转面', faceOptions, 'face', updateComboDesc);
+  const faceBtns = makeOptionGroup(window.t('grp_face'), faceOptions, 'face', updateComboDesc);
 
   // 顶面改变时：禁用旋转面中的同色与对面，必要时自动切换旋转面
   function onTopChange(){
@@ -864,13 +870,14 @@
     }
   }
   updateFaceBtnsDisabled();
+  refreshFaceBtns = updateFaceBtnsDisabled;
   // 3. 操作方向
-  makeOptionGroup('3. 执行操作', [
-    { label:'左手公式', value:'left', title:'上右下左：X逆 → 顶逆 → X顺 → 顶顺' },
-    { label:'右手公式', value:'right', title:'上左下右：X顺 → 顶顺 → X逆 → 顶逆' },
+  makeOptionGroup(window.t('grp_hand'), [
+    { label:window.t('opt_left'), value:'left', title:window.t('opt_left_title') },
+    { label:window.t('opt_right'), value:'right', title:window.t('opt_right_title') },
   ], 'hand', updateComboDesc);
   // 4. 执行数量
-  makeOptionGroup('4. 执行数量', [1,2,3,4,5,6].map(n=>({ label:String(n), value:n })), 'count', updateComboDesc);
+  makeOptionGroup(window.t('grp_count'), [1,2,3,4,5,6].map(n=>({ label:String(n), value:n })), 'count', updateComboDesc);
 
   // 序列预览
   const descEl = document.createElement('div');
@@ -880,7 +887,7 @@
   // 5. 执行按钮
   const execBtn = document.createElement('button');
   execBtn.className = 'combo-exec';
-  execBtn.textContent = '执行';
+  execBtn.textContent = window.t('exec_btn');
   execBtn.addEventListener('click', ()=>{
     if(animating) return;
     if(comboState.top === comboState.face) return;
@@ -896,12 +903,12 @@
     const same = (top === face);
     execBtn.disabled = same;
     if(same){
-      descEl.textContent = '⚠ 顶面与旋转面不能相同';
+      descEl.textContent = window.t('combo_same');
       return;
     }
     const seq = buildComboSeq(top, face, hand);
-    const oneRound = seq.map(([f,p])=>FACE_COLOR_NAME[f]+(p?"'":'')).join(' → ');
-    descEl.textContent = (hand==='right'?'右手公式':'左手公式') + '：' + oneRound + (count>1 ? '  ×'+count : '');
+    const oneRound = seq.map(([f,p])=>faceColorName(f)+(p?"'":'')).join(' → ');
+    descEl.textContent = (hand==='right'? window.t('combo_hand_right') : window.t('combo_hand_left')) + window.t('combo_sep') + oneRound + (count>1 ? '  ×'+count : '');
   }
   updateComboDesc();
 
@@ -909,6 +916,7 @@
 
   controlsRoot.appendChild(leftCol);
   controlsRoot.appendChild(rightCol);
+  }
 
   document.getElementById('resetBtn').addEventListener('click', ()=>{
     if(animating) return;
@@ -989,17 +997,14 @@
       'l':['L',false],'L':['L',true],
     },
   };
-  const HINT_TEXTS = {
-    color: '<b>H</b>黄 / <b>B</b>白 / <b>G</b>绿 / <b>L</b>蓝 / <b>R</b>红 / <b>C</b>橙',
-    standard: '<b>U</b>上 / <b>D</b>下 / <b>F</b>前 / <b>B</b>后 / <b>R</b>右 / <b>L</b>左',
-  };
+  function hintHtml(scheme){ return window.t('hint_'+scheme); }
   let activeKeyMap = KEY_MAPS.color;
 
   const keySchemeSel = document.getElementById('keyScheme');
   const keyHintSpan = document.getElementById('keyHintText');
   keySchemeSel.addEventListener('change', ()=>{
     activeKeyMap = KEY_MAPS[keySchemeSel.value];
-    keyHintSpan.innerHTML = HINT_TEXTS[keySchemeSel.value];
+    keyHintSpan.innerHTML = hintHtml(keySchemeSel.value);
   });
 
   document.addEventListener('keydown', e=>{
@@ -1011,4 +1016,17 @@
       doMove(move[0], move[1], undefined, commitStep);
     }
   });
+
+  // —— 语言切换：暴露刷新钩子，并在就绪时应用当前语言 ——
+  function refreshCubeLang(){
+    FACES.forEach(function(face){
+      if(faceLabelEls[face]) faceLabelEls[face].textContent = clusterLabelOf(face);
+      if(ccwBtns[face]) ccwBtns[face].title = faceColorName(face) + window.t('ccw_title_suffix');
+      if(cwBtns[face]) cwBtns[face].title = faceColorName(face) + window.t('cw_title_suffix');
+    });
+    if(keyHintSpan && keySchemeSel) keyHintSpan.innerHTML = hintHtml(keySchemeSel.value);
+  }
+  window.__rebuildControls = buildControls;
+  window.__refreshCubeLang = refreshCubeLang;
+  if(window.applyLang){ window.applyLang(); } else { buildControls(); }
 })();
