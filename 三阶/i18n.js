@@ -71,8 +71,8 @@
       footer: 'Pure front-end: real cube-group arithmetic (rotation-matrix driven); the planar and 3D views share one state.',
       x_title: 'Follow me on X',
 
-      fc_U: 'Yellow', fc_D: 'White', fc_F: 'Green', fc_B: 'Blue', fc_L: 'Orange', fc_R: 'Red',
-      cl_U: 'Yellow·Up', cl_D: 'White·Down', cl_F: 'Green·Front', cl_B: 'Blue·Back', cl_L: 'Orange·Left', cl_R: 'Red·Right',
+      fc_U: 'Y', fc_D: 'W', fc_F: 'G', fc_B: 'B', fc_L: 'O', fc_R: 'R',
+      cl_U: 'Y·Up', cl_D: 'W·Down', cl_F: 'G·Front', cl_B: 'B·Back', cl_L: 'O·Left', cl_R: 'R·Right',
 
       ccw_title_suffix: "' (CCW)",
       cw_title_suffix: ' (CW)',
