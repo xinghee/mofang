@@ -24,8 +24,8 @@
       footer: '纯前端实现：真实的魔方群运算（旋转矩阵驱动），平面图与立体图共享同一份状态。',
       x_title: '在 X 上关注我',
 
-      fc_U: '黄', fc_D: '白', fc_F: '绿', fc_B: '蓝', fc_L: '橙', fc_R: '红',
-      cl_U: '黄·上', cl_D: '白·下', cl_F: '绿·前', cl_B: '蓝·后', cl_L: '橙·左', cl_R: '红·右',
+      fc_U: '黄', fc_D: '白', fc_F: '蓝', fc_B: '绿', fc_L: '橙', fc_R: '红',
+      cl_U: '黄·上', cl_D: '白·下', cl_F: '蓝·前', cl_B: '绿·后', cl_L: '橙·左', cl_R: '红·右',
 
       ccw_title_suffix: "' (逆时针)",
       cw_title_suffix: ' (顺时针)',
@@ -71,8 +71,8 @@
       footer: 'Pure front-end: real cube-group arithmetic (rotation-matrix driven); the planar and 3D views share one state.',
       x_title: 'Follow me on X',
 
-      fc_U: 'Y', fc_D: 'W', fc_F: 'G', fc_B: 'B', fc_L: 'O', fc_R: 'R',
-      cl_U: 'Y·Up', cl_D: 'W·Down', cl_F: 'G·Front', cl_B: 'B·Back', cl_L: 'O·Left', cl_R: 'R·Right',
+      fc_U: 'Y', fc_D: 'W', fc_F: 'B', fc_B: 'G', fc_L: 'O', fc_R: 'R',
+      cl_U: 'Y·Up', cl_D: 'W·Down', cl_F: 'B·Front', cl_B: 'G·Back', cl_L: 'O·Left', cl_R: 'R·Right',
 
       ccw_title_suffix: "' (CCW)",
       cw_title_suffix: ' (CW)',
