@@ -150,8 +150,8 @@
   /* 颜色边框 + 选中半透明底色 */
   .combo-opt.c-U{ border-color:var(--c-U); } .combo-opt.c-U.active{ background:rgba(247,208,0,.28); box-shadow:0 0 0 1.5px var(--c-U); }
   .combo-opt.c-D{ border-color:#bbb; }       .combo-opt.c-D.active{ background:rgba(200,200,200,.32); box-shadow:0 0 0 1.5px #999; }
-  .combo-opt.c-F{ border-color:var(--c-F); } .combo-opt.c-F.active{ background:rgba(31,170,74,.22); box-shadow:0 0 0 1.5px var(--c-F); }
-  .combo-opt.c-B{ border-color:var(--c-B); } .combo-opt.c-B.active{ background:rgba(30,111,214,.22); box-shadow:0 0 0 1.5px var(--c-B); }
+  .combo-opt.c-F{ border-color:var(--c-F); } .combo-opt.c-F.active{ background:rgba(30,111,214,.22); box-shadow:0 0 0 1.5px var(--c-F); }
+  .combo-opt.c-B{ border-color:var(--c-B); } .combo-opt.c-B.active{ background:rgba(31,170,74,.22); box-shadow:0 0 0 1.5px var(--c-B); }
   .combo-opt.c-L{ border-color:var(--c-L); } .combo-opt.c-L.active{ background:rgba(255,122,26,.25); box-shadow:0 0 0 1.5px var(--c-L); }
   .combo-opt.c-R{ border-color:var(--c-R); } .combo-opt.c-R.active{ background:rgba(217,33,33,.22); box-shadow:0 0 0 1.5px var(--c-R); }
   /* 执行按钮(右侧竖向) */
